@@ -191,27 +191,61 @@ expect(_.uniq(numbers)).to.eql([1, 2]);*/
   };
 
   // Determine if the array or object contains a given value (using `===`).
-  _.contains = function(collection, target) {
+    _.contains = function(collection, target) {
     // TIP: Many iteration problems can be most easily expressed in
     // terms of reduce(). Here's a freebie to demonstrate!
+    if(Array.isArray(collection)) {
     return _.reduce(collection, function(wasFound, item) {
       if (wasFound) {
         return true;
       }
       return item === target;
     }, false);
+    } else {
+      for(let key in collection){
+        if(collection[key] === target) {
+          return true;
+        }
+      }
+      return false;
+    }
   };
 
 
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
     // TIP: Try re-using reduce() here.
+    if(iterator){
+    return _.reduce(collection,function(acc,cur){
+          if(acc && iterator(cur)) {
+            return true;
+          } else {
+            return false;
+          }
+    },true);
+  } else {
+    return _.reduce(collection,function(acc,cur){
+          if(acc && cur) {
+            return true;
+          } else {
+            return false;
+          }
+    },true);
+  }
   };
 
   // Determine whether any of the elements pass a truth test. If no iterator is
   // provided, provide a default one
   _.some = function(collection, iterator) {
     // TIP: There's a very clever way to re-use every() here.
+    if(iterator){
+      return !_.every(collection,function(ele){
+            return !iterator(ele);
+      });
+    }
+    return !_.every(collection,function(ele){
+      return !ele;
+    });
   };
 
 
@@ -234,11 +268,28 @@ expect(_.uniq(numbers)).to.eql([1, 2]);*/
   //     bla: "even more stuff"
   //   }); // obj1 now contains key1, key2, key3 and bla
   _.extend = function(obj) {
+    let args = [...arguments];
+    let first = args.shift();
+    return _.reduce(args,function(acc,cur){
+        _.each(cur,function(value,key){
+              acc[key] = value;
+        });
+        return acc;
+    },first);
   };
 
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
   _.defaults = function(obj) {
+    let args = [...arguments];
+    let first = args.shift();
+    return _.reduce(args,function(acc,cur){
+        _.each(cur,function(value,key){
+              if(!acc.hasOwnProperty(key))
+              acc[key] = value;
+        });
+        return acc;
+    },first);
   };
 
 
@@ -277,11 +328,25 @@ expect(_.uniq(numbers)).to.eql([1, 2]);*/
   // that the function only takes primitives as arguments.
   // memoize could be renamed to oncePerUniqueArgumentList; memoize does the
   // same thing as once, but based on many sets of unique arguments.
-  //
+  //expect(add(1, 2)).to.equal(3);
+      //  expect(memoAdd(1, 2)).to.equal(3);
   // _.memoize should return a function that, when called, will check if it has
   // already computed the result for the given argument and return that value
   // instead if possible.
   _.memoize = function(func) {
+    /* {12: "1,2undefined"}
+*/
+   
+    let map = {};
+    return function(){
+       let args = [...arguments];
+      if(!map[args.join('')]) {
+          map[args.join('')] = func(...args);
+          return  map[args.join('')];
+      } else {
+        return map[args.join('')];
+      }
+    }
   };
 
   // Delays a function for the given number of milliseconds, and then calls
@@ -290,7 +355,16 @@ expect(_.uniq(numbers)).to.eql([1, 2]);*/
   // The arguments for the original function are passed after the wait
   // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
   // call someFunction('a', 'b') after 500ms
+  //_.delay(callback, 100, 1, 2);
   _.delay = function(func, wait) {
+    var args = [...arguments];
+    if(args.length > 2){
+    args.splice(0,2);
+    func = func.apply(null,args)
+    }
+    return function(){
+      setTimeout(func,wait);
+    }()
   };
 
 
@@ -305,6 +379,16 @@ expect(_.uniq(numbers)).to.eql([1, 2]);*/
   // input array. For a tip on how to make a copy of an array, see:
   // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
+      let output = array.slice();
+       for (var i = array.length-1; i >=0; i--) {
+     
+        var randomIndex = Math.floor(Math.random()*(i+1)); 
+        var itemAtIndex = output[randomIndex]; 
+         
+        output[randomIndex] = output[i]; 
+        output[i] = itemAtIndex;
+    }
+    return output;
   };
 
 
