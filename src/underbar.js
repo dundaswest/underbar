@@ -153,7 +153,7 @@ expect(_.uniq(numbers)).to.eql([1, 2]);*/
     // TIP: map is really handy when you want to transform an array of
     // values into a new array of values. _.pluck() is solved for you
     // as an example of this.
-    return _.map(collection, function(item){
+    return _.map(collection, function(item) {
       return item[key];
     });
   };
@@ -239,11 +239,11 @@ expect(_.uniq(numbers)).to.eql([1, 2]);*/
   _.some = function(collection, iterator) {
     // TIP: There's a very clever way to re-use every() here.
     if(iterator){
-      return !_.every(collection,function(ele){
+      return !_.every(collection,function(ele) {
             return !iterator(ele);
       });
     }
-    return !_.every(collection,function(ele){
+    return !_.every(collection,function(ele) {
       return !ele;
     });
   };
@@ -270,8 +270,8 @@ expect(_.uniq(numbers)).to.eql([1, 2]);*/
   _.extend = function(obj) {
     let args = [...arguments];
     let first = args.shift();
-    return _.reduce(args,function(acc,cur){
-        _.each(cur,function(value,key){
+    return _.reduce(args,function(acc,cur) {
+        _.each(cur,function(value,key) {
               acc[key] = value;
         });
         return acc;
@@ -283,8 +283,8 @@ expect(_.uniq(numbers)).to.eql([1, 2]);*/
   _.defaults = function(obj) {
     let args = [...arguments];
     let first = args.shift();
-    return _.reduce(args,function(acc,cur){
-        _.each(cur,function(value,key){
+    return _.reduce(args,function(acc,cur) {
+        _.each(cur,function(value,key) {
               if(!acc.hasOwnProperty(key))
               acc[key] = value;
         });
@@ -338,7 +338,7 @@ expect(_.uniq(numbers)).to.eql([1, 2]);*/
 */
    
     let map = {};
-    return function(){
+    return function() {
        let args = [...arguments];
       if(!map[args.join('')]) {
           map[args.join('')] = func(...args);
@@ -362,7 +362,7 @@ expect(_.uniq(numbers)).to.eql([1, 2]);*/
     args.splice(0,2);
     func = func.apply(null,args)
     }
-    return function(){
+    return function() {
       setTimeout(func,wait);
     }()
   };
