@@ -380,7 +380,7 @@ expect(_.uniq(numbers)).to.eql([1, 2]);*/
   // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
       let output = array.slice();
-       for (var i = array.length-1; i >=0; i--) {
+       for (var i = array.length-1; i >= 0; i--) {
      
         var randomIndex = Math.floor(Math.random()*(i+1)); 
         var itemAtIndex = output[randomIndex]; 
@@ -395,7 +395,8 @@ expect(_.uniq(numbers)).to.eql([1, 2]);*/
   /**
    * ADVANCED
    * =================
-   *
+
+
    * Note: This is the end of the pre-course curriculum. Feel free to continue,
    * but nothing beyond here is required.
    */
@@ -403,38 +404,103 @@ expect(_.uniq(numbers)).to.eql([1, 2]);*/
   // Calls the method named by functionOrKey on each value in the list.
   // Note: You will need to learn a bit about .apply to complete this.
   _.invoke = function(collection, functionOrKey, args) {
+    var output = [];
+    var myfunc;
+    if(typeof functionOrKey === 'string') {
+      myfunc = String.prototype[functionOrKey];
+      _.each(collection,function(ele){
+        output.push(myfunc.apply(ele));
+      });
+      return output;
+    }
+    _.each(collection,function(ele){
+      output.push(functionOrKey.apply(ele));
+    });
+    return output;
   };
 
   // Sort the object's values by a criterion produced by an iterator.
   // If iterator is a string, sort objects by that property with the name
   // of that string. For example, _.sortBy(people, 'name') should sort
   // an array of people by their name.
+  /*var list = ['one', 'two', 'three', 'four', 'five'];
+var sorted = _.sortBy(list, 'length');
+expect(sorted).to.eql(['one', 'two', 'four', 'five', 'three']);*/
   _.sortBy = function(collection, iterator) {
+    var result = collection.slice();
+    if(typeof iterator === 'string') {
+      result.sort(function(a, b) {
+      return a[iterator] - b[iterator];
+      });
+    } else {
+      result.sort(function(a,b){
+        return iterator(a) - iterator(b);
+      });
+    }
+
+    return result;
   };
 
   // Zip together two or more arrays with elements of the same index
   // going together.
   //
-  // Example:
-  // _.zip(['a','b','c','d'], [1,2,3]) returns [['a',1], ['b',2], ['c',3], ['d',undefined]]
+  
   _.zip = function() {
+    var output = [];
+    var inputs = [...arguments];
+    for(var i = 0; i < inputs[0].length;i++) {
+      var arr = [];
+      for(var j = 0; j < inputs.length;j++) {
+        arr.push(inputs[j][i]);
+      }
+      output.push(arr);
+    }
+    return output;
   };
 
   // Takes a multidimensional array and converts it to a one-dimensional array.
   // The new array should contain all elements of the multidimensional array.
-  //
+  
   // Hint: Use Array.isArray to check if something is an array
   _.flatten = function(nestedArray, result) {
+    var output =[];
+    for(var i = 0; i < nestedArray.length;i++) {
+      if(Array.isArray(nestedArray[i])) {
+        output = output.concat(_.flatten(nestedArray[i]));
+      } else { 
+        output.push(nestedArray[i]);
+      }
+    }
+    return output;
   };
 
   // Takes an arbitrary number of arrays and produces an array that contains
   // every item shared between all the passed-in arrays.
   _.intersection = function() {
+    var inputs = [...arguments];
+    var first = inputs.shift();
+    return  _.reduce(inputs,function(acc,cur){
+      return _.filter(cur,function(e){
+        return acc.includes(e);
+      });
+
+    },first);
+
   };
 
   // Take the difference between one array and a number of other arrays.
   // Only the elements present in just the first array will remain.
+  //var diff = _.difference([1,2,3], [2,30,40]);
+//expect(diff).to.eql([1,3]);
   _.difference = function(array) {
+    var inputs = [...arguments];
+    var first = inputs.shift();
+    return  _.reduce(inputs,function(acc,cur){
+      return _.filter(acc,function(e){
+        return !cur.includes(e);
+      });
+
+    },first);
   };
 
   // Returns a function, that, when invoked, will only be triggered at most once
