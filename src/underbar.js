@@ -427,18 +427,19 @@ expect(_.uniq(numbers)).to.eql([1, 2]);*/
 var sorted = _.sortBy(list, 'length');
 expect(sorted).to.eql(['one', 'two', 'four', 'five', 'three']);*/
   _.sortBy = function(collection, iterator) {
-    var result = collection.slice();
-    if(typeof iterator === 'string') {
-      result.sort(function(a, b) {
-      return a[iterator] - b[iterator];
-      });
-    } else {
-      result.sort(function(a,b){
-        return iterator(a) - iterator(b);
-      });
-    }
+  var result = collection.slice();
 
-    return result;
+  if (typeof iterator === 'string') {
+    result.sort(function(a, b) {
+      return a[iterator] - b[iterator];
+    });
+  } else if (typeof iterator === 'function') {
+    result.sort(function(a, b) {
+      return iterator(a) - iterator(b);
+    });
+  }
+  
+  return result;
   };
 
   // Zip together two or more arrays with elements of the same index
@@ -509,5 +510,7 @@ expect(sorted).to.eql(['one', 'two', 'four', 'five', 'three']);*/
   //
   // Note: This is difficult! It may take a while to implement.
   _.throttle = function(func, wait) {
-  };
+ 
+};
+
 }());
